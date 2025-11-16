@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const runCodeRoute = require("./routes/run_code_route");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 const app = express();
 app.use(cors({ origin: "*" }));

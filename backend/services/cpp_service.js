@@ -4,7 +4,6 @@ const path = require("path");
 
 async function runCppCode(req, res) {
   const { code, input } = req.body; // Get the C++ code from the request
-  console.log(`code: ${code}`);
 
   // Save the user's code to a file
   const userCodeFilePath = path.join(__dirname, "user_code.cpp");
