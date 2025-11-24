@@ -13,8 +13,8 @@ export default function Navbar() {
         style={{
           textDecoration: 'none',
           color: '#58a6ff',
-          fontSize: '20px',
-          fontWeight: '600',
+          fontSize: '30px',
+          fontWeight: '700',
           display: 'flex',
           alignItems: 'center'
         }}

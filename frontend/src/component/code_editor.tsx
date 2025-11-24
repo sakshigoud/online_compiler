@@ -105,7 +105,7 @@ const CodeEditor = () => {
                         onChange={loadCode}
                         style={{ display: 'none' }}
                     />
-                    <label
+                    {/* <label
                         htmlFor="formFile"
                         style={{
                             backgroundColor: '#21262d',
@@ -119,7 +119,7 @@ const CodeEditor = () => {
                         }}
                     >
                         Choose File
-                    </label>
+                    </label> */}
                     <select
                         style={{ 
                             width: '150px', 
