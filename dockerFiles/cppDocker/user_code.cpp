@@ -1,8 +1,7 @@
-// Write your C++ code here...
-#include <bits/stdc++.h>
-using namespace std;
+#include <iostream>
+
 int main()
 {
-    cout << "Hello, World!" << endl;
+    std::cout << "Hello World" << std::endl;
     return 0;
 }

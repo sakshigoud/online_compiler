@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { Editor as MonacoEditor } from '@monaco-editor/react';
 
-type LanguageKey = 'cpp' | 'python' | 'javascript' | 'java';
+type LanguageKey = 'c' | 'cpp' | 'python' | 'javascript' | 'java' | 'csharp' | 'typescript';
 
 const DEFAULT_CODE: Record<LanguageKey, string> = {
+    c: '#include <stdio.h>\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}',
     cpp: '// Write your C++ code here...\n#include <bits/stdc++.h>\nusing namespace std;\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}',
     python: '# Write your Python code here...\nprint("Hello, World!")',
     javascript: '// Write your JavaScript code here...\nconsole.log("Hello, World!")',
     java: '// The class name must be "user_code"\n// Write your Java code here...\npublic class user_code {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}',
+    csharp: 'using System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("Hello, World!");\n    }\n}',
+    typescript: '// Write your TypeScript code here...\nconsole.log("Hello, World!")',
 };
 
 const CodeEditor = () => {
@@ -105,7 +108,7 @@ const CodeEditor = () => {
                         onChange={loadCode}
                         style={{ display: 'none' }}
                     />
-                    {/* <label
+                    <label
                         htmlFor="formFile"
                         style={{
                             backgroundColor: '#21262d',
@@ -119,7 +122,7 @@ const CodeEditor = () => {
                         }}
                     >
                         Choose File
-                    </label> */}
+                    </label>
                     <select
                         style={{ 
                             width: '150px', 
@@ -134,10 +137,13 @@ const CodeEditor = () => {
                         value={language}
                         onChange={handleLanguageChange}
                     >
+                        <option value="c">C</option>
                         <option value="cpp">C++</option>
                         <option value="python">Python</option>
                         <option value="javascript">JavaScript</option>
                         <option value="java">Java</option>
+                        <option value="csharp">C#</option>
+                        <option value="typescript">TypeScript</option>
                     </select>
                     <button
                         type="button"
