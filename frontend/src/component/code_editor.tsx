@@ -1,7 +1,87 @@
 import { useState } from 'react';
 import { Editor as MonacoEditor } from '@monaco-editor/react';
+import type { IconType } from 'react-icons';
+import { FaJava } from 'react-icons/fa6';
+import { SiC, SiCplusplus, SiJavascript, SiPython, SiSharp, SiTypescript } from 'react-icons/si';
+import '../App.css';
 
 type LanguageKey = 'c' | 'cpp' | 'python' | 'javascript' | 'java' | 'csharp' | 'typescript';
+
+type LanguageCard = {
+    key: LanguageKey;
+    label: string;
+    languageName: string;
+    icon: IconType;
+    accent: string;
+    thumbnail: string;
+    description: string;
+};
+
+const LANGUAGE_CARDS: LanguageCard[] = [
+    {
+        key: 'cpp',
+        label: 'C++',
+        languageName: 'systems',
+        icon: SiCplusplus,
+        accent: '#7dd3fc',
+        thumbnail: 'linear-gradient(135deg, #0ea5e9 0%, #1d4ed8 100%)',
+        description: 'Fast, compiled, and close to the metal.',
+    },
+    {
+        key: 'python',
+        label: 'Python',
+        languageName: 'scripting',
+        icon: SiPython,
+        accent: '#fbbf24',
+        thumbnail: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+        description: 'Clean syntax for quick experiments.',
+    },
+    {
+        key: 'javascript',
+        label: 'JavaScript',
+        languageName: 'web runtime',
+        icon: SiJavascript,
+        accent: '#fde68a',
+        thumbnail: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)',
+        description: 'Run browser-style code on Node.',
+    },
+    {
+        key: 'java',
+        label: 'Java',
+        languageName: 'oop',
+        icon: FaJava,
+        accent: '#fca5a5',
+        thumbnail: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
+        description: 'Structured classes with a classic JVM flow.',
+    },
+    {
+        key: 'c',
+        label: 'C',
+        languageName: 'native',
+        icon: SiC,
+        accent: '#86efac',
+        thumbnail: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)',
+        description: 'Minimal runtime for low-level programs.',
+    },
+    {
+        key: 'csharp',
+        label: 'C#',
+        languageName: 'dotnet',
+        icon: SiSharp,
+        accent: '#c4b5fd',
+        thumbnail: 'linear-gradient(135deg, #8b5cf6 0%, #4c1d95 100%)',
+        description: 'Modern app code for the .NET stack.',
+    },
+    {
+        key: 'typescript',
+        label: 'TypeScript',
+        languageName: 'typed js',
+        icon: SiTypescript,
+        accent: '#93c5fd',
+        thumbnail: 'linear-gradient(135deg, #38bdf8 0%, #2563eb 100%)',
+        description: 'Safer JavaScript with static types.',
+    },
+];
 
 const DEFAULT_CODE: Record<LanguageKey, string> = {
     c: '#include <stdio.h>\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}',
@@ -19,7 +99,9 @@ const CodeEditor = () => {
     const [language, setLanguage] = useState<LanguageKey>('cpp');
     const [isRunning, setIsRunning] = useState(false);
     const [inputValue, setInputValue] = useState('');
-    
+
+    const activeCard = LANGUAGE_CARDS.find((card) => card.key === language) ?? LANGUAGE_CARDS[0];
+
     const handleEditorChange = (value: string | undefined) => {
         setCode(value || '');
     };
@@ -39,10 +121,6 @@ const CodeEditor = () => {
     };
 
     const runCode = async () => {
-        // alert("compile");
-        // setTimeout(() => {
-        //     alert("We are in devloping stage so your code will take some time to execute please be patient");
-        // }, 1000);
         setIsRunning(true);
 
         try {
@@ -51,7 +129,7 @@ const CodeEditor = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code, input: inputValue }), // Include input value in the request
+                body: JSON.stringify({ code, input: inputValue }),
             });
 
             if (response.status === 200) {
@@ -70,112 +148,79 @@ const CodeEditor = () => {
         }
     };
 
-    const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedLanguage = event.target.value as LanguageKey;
+    const handleLanguageSelect = (selectedLanguage: LanguageKey) => {
         setLanguage(selectedLanguage);
         setCode(DEFAULT_CODE[selectedLanguage]);
         setInputValue('');
+        setOutput('');
     };
 
-
     return (
-        <div style={{ 
-            height: 'calc(100vh - 60px)', 
-            display: 'flex', 
-            flexDirection: 'row',
-            backgroundColor: '#0d1117',
-            padding: '10px',
-            gap: '10px'
-        }}>
-            {/* Editor Section */}
-            <div style={{ 
-                flex: 1, 
-                display: 'flex', 
-                flexDirection: 'column',
-                minWidth: 0
-            }}>
-                {/* Toolbar */}
-                <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'flex-end',
-                    marginBottom: '10px',
-                    gap: '8px'
-                }}>
-                    <input
-                        type="file"
-                        id="formFile"
-                        onChange={loadCode}
-                        style={{ display: 'none' }}
-                    />
-                    <label
-                        htmlFor="formFile"
-                        style={{
-                            backgroundColor: '#21262d',
-                            color: 'white',
-                            padding: '8px 20px',
-                            cursor: 'pointer',
-                            borderRadius: '6px',
-                            border: '1px solid #30363d',
-                            fontSize: '14px',
-                            fontWeight: '500'
-                        }}
-                    >
-                        Choose File
-                    </label>
-                    <select
-                        style={{ 
-                            width: '150px', 
-                            backgroundColor: '#21262d', 
-                            color: 'white', 
-                            border: '1px solid #30363d',
-                            borderRadius: '6px',
-                            padding: '8px 12px',
-                            fontSize: '14px',
-                            cursor: 'pointer'
-                        }}
-                        value={language}
-                        onChange={handleLanguageChange}
-                    >
-                        <option value="c">C</option>
-                        <option value="cpp">C++</option>
-                        <option value="python">Python</option>
-                        <option value="javascript">JavaScript</option>
-                        <option value="java">Java</option>
-                        <option value="csharp">C#</option>
-                        <option value="typescript">TypeScript</option>
-                    </select>
-                    <button
-                        type="button"
-                        onClick={runCode}
-                        style={{ 
-                            backgroundColor: '#238636',
-                            color: 'white',
-                            padding: '8px 20px',
-                            borderRadius: '6px',
-                            border: 'none',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            cursor: isRunning ? 'not-allowed' : 'pointer',
-                            opacity: isRunning ? 0.6 : 1
-                        }}
-                        disabled={isRunning}
-                    >
-                        {isRunning ? 'Running...' : 'Run'}
-                    </button>
+        <div className="compiler-shell">
+            <aside className="panel language-rail">
+                <div className="panel-header">
+                    <p className="eyebrow">Languages</p>
+                    <h2>Pick a runtime</h2>
+                    <p className="panel-copy">Tap a card to switch the editor, template, and execution backend.</p>
                 </div>
 
-                {/* Monaco Editor */}
-                <div style={{ 
-                    flex: 1, 
-                    borderRadius: '6px', 
-                    overflow: 'hidden',
-                    border: '1px solid #30363d'
-                }}>
+                <div className="language-grid">
+                    {LANGUAGE_CARDS.map((card) => {
+                        const isActive = card.key === language;
+                        const CardIcon = card.icon;
+
+                        return (
+                            <button
+                                key={card.key}
+                                type="button"
+                                className={`language-card ${isActive ? 'active' : ''}`}
+                                onClick={() => handleLanguageSelect(card.key)}
+                            >
+                                <div className="language-thumb" style={{ background: card.thumbnail }}>
+                                    <CardIcon size={28} />
+                                </div>
+                                <div className="language-card-body">
+                                    <div className="language-card-topline">
+                                        <strong>{card.label}</strong>
+                                        <span style={{ color: card.accent }}>{card.languageName}</span>
+                                    </div>
+                                    <p>{card.description}</p>
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+            </aside>
+
+            <main className="panel editor-panel">
+                <div className="editor-topbar">
+                    <div>
+                        <p className="eyebrow">Editor</p>
+                        <h1>{activeCard.label}</h1>
+                        <p className="panel-copy">Current runtime: {activeCard.languageName}</p>
+                    </div>
+
+                    <div className="editor-actions">
+                        <input
+                            type="file"
+                            id="formFile"
+                            onChange={loadCode}
+                            style={{ display: 'none' }}
+                        />
+                        <label htmlFor="formFile" className="action-button secondary-button">
+                            Upload file
+                        </label>
+                        <button type="button" onClick={runCode} className="action-button primary-button" disabled={isRunning}>
+                            {isRunning ? 'Running...' : 'Run code'}
+                        </button>
+                    </div>
+                </div>
+
+                <div className="editor-surface">
                     <MonacoEditor
                         height="100%"
                         width="100%"
-                        language={language}
+                        language={language === 'csharp' ? 'csharp' : language}
                         value={code}
                         onChange={handleEditorChange}
                         theme="vs-dark"
@@ -184,86 +229,39 @@ const CodeEditor = () => {
                             fontSize: 14,
                             lineNumbers: 'on',
                             scrollBeyondLastLine: false,
-                            automaticLayout: true
+                            automaticLayout: true,
+                            padding: { top: 16, bottom: 16 },
+                            fontLigatures: true,
                         }}
                     />
                 </div>
-            </div>
+            </main>
 
-            {/* Output Section */}
-            <div style={{
-                width: '400px',
-                display: 'flex',
-                flexDirection: 'column',
-                backgroundColor: '#161b22',
-                borderRadius: '6px',
-                border: '1px solid #30363d',
-                overflow: 'hidden'
-            }}>
-                {/* Input Section */}
-                <div style={{ padding: '15px', borderBottom: '1px solid #30363d' }}>
-                    <label style={{ 
-                        display: 'block', 
-                        marginBottom: '8px',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: '#c9d1d9'
-                    }}>
-                        Input
-                    </label>
-                    <textarea
-                        style={{
-                            width: '100%',
-                            minHeight: '100px',
-                            backgroundColor: '#0d1117',
-                            color: '#c9d1d9',
-                            border: '1px solid #30363d',
-                            borderRadius: '6px',
-                            padding: '10px',
-                            fontSize: '13px',
-                            fontFamily: 'monospace',
-                            resize: 'vertical'
-                        }}
-                        placeholder="Input for the code..."
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                    />
+            <section className="panel output-panel">
+                <div className="panel-header compact">
+                    <div>
+                        <p className="eyebrow">Input</p>
+                        <h2>Run with data</h2>
+                    </div>
                 </div>
 
-                {/* Output Section */}
-                <div style={{ 
-                    flex: 1, 
-                    padding: '15px',
-                    overflowY: 'auto',
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}>
-                    <h5 style={{ 
-                        color: '#58a6ff',
-                        marginBottom: '12px',
-                        fontSize: '14px',
-                        fontWeight: '600'
-                    }}>
-                        Output
-                    </h5>
-                    <pre style={{ 
-                        whiteSpace: 'pre-wrap', 
-                        wordWrap: 'break-word',
-                        backgroundColor: '#0d1117',
-                        padding: '12px',
-                        borderRadius: '6px',
-                        border: '1px solid #30363d',
-                        color: '#c9d1d9',
-                        fontSize: '13px',
-                        fontFamily: 'monospace',
-                        margin: 0,
-                        flex: 1,
-                        overflow: 'auto'
-                    }}>
-                        {output || 'No output yet'}
-                    </pre>
+                <textarea
+                    className="input-field"
+                    placeholder="Type input here for stdin-driven programs..."
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                />
+
+                <div className="output-section">
+                    <div className="panel-header compact output-heading">
+                        <div>
+                            <p className="eyebrow">Output</p>
+                            <h2>Console</h2>
+                        </div>
+                    </div>
+                    <pre className="output-field">{output || 'No output yet'}</pre>
                 </div>
-            </div>
+            </section>
         </div>
     );
 };
